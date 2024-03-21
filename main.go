@@ -1,15 +1,31 @@
 package main
 
 import (
-    "github.com/gofiber/fiber/v2"
+	"eticketing/config"
+	"eticketing/module/feature/route"
+	"eticketing/utils/database"
+	"os"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
-    app := fiber.New()
+	app := fiber.New()
+	var initConfig = config.InitConfig()
+	db := database.InitPGSDatabase(*initConfig)
+	database.Migrate(db)
+	route.SetupRoutes(app, db)
 
-    app.Get("/", func(c *fiber.Ctx) error {
-        return c.SendString("Hello, E-Ticketing!")
-    })
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, Ruti Store")
+	})
 
-    app.Listen(":3000")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+	err := app.Listen(":" + port)
+	if err != nil {
+		panic("Failed to start the server: " + err.Error())
+	}
 }
