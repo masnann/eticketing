@@ -1,5 +1,4 @@
 .idea/
 
 #File configuration
-config.json
 .env

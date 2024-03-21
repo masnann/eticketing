@@ -114,3 +114,123 @@ func TestLogin(t *testing.T) {
 		jwt.AssertExpectations(t)
 	})
 }
+
+func TestRegister(t *testing.T) {
+	email := "test@example.com"
+	password := "password123"
+	name := "John Doe"
+	phone := "123456789"
+	role := "customer"
+
+	t.Run("Success Case - New User Registration", func(t *testing.T) {
+		repo, service, hash, _ := setupTest(t)
+		req := &domain.RegisterRequest{
+			Email:    email,
+			Password: password,
+			Name:     name,
+			Phone:    phone,
+			Role:     role,
+		}
+		hashedPassword := "hashedPassword"
+		expectedUser := &entities.UserModels{
+			Email:    email,
+			Password: hashedPassword,
+			Name:     name,
+			Phone:    phone,
+			Role:     role,
+		}
+
+		repo.On("GetUsersByEmail", email).Return(nil, nil)
+		hash.On("GenerateHash", password).Return(hashedPassword, nil)
+		repo.On("CreateUser", expectedUser).Return(expectedUser, nil)
+
+		user, err := service.Register(req)
+
+		assert.Nil(t, err)
+		assert.NotNil(t, user)
+		assert.Equal(t, expectedUser, user)
+
+		repo.AssertExpectations(t)
+		hash.AssertExpectations(t)
+	})
+
+	t.Run("Error Case - Email Already Exists", func(t *testing.T) {
+		repo, service, _, _ := setupTest(t)
+		req := &domain.RegisterRequest{
+			Email:    email,
+			Password: password,
+			Name:     name,
+			Phone:    phone,
+			Role:     role,
+		}
+		existingUser := &entities.UserModels{
+			Email: email,
+		}
+		expectedErr := errors.New("email already exists")
+
+		repo.On("GetUsersByEmail", email).Return(existingUser, nil)
+
+		user, err := service.Register(req)
+
+		assert.Error(t, err)
+		assert.Nil(t, user)
+		assert.EqualError(t, err, expectedErr.Error())
+
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Error Case - Hashing Password Failure", func(t *testing.T) {
+		repo, service, hash, _ := setupTest(t)
+		req := &domain.RegisterRequest{
+			Email:    email,
+			Password: password,
+			Name:     name,
+			Phone:    phone,
+			Role:     role,
+		}
+		expectedErr := errors.New("hashing password failed")
+
+		repo.On("GetUsersByEmail", email).Return(nil, nil)
+		hash.On("GenerateHash", password).Return("", expectedErr)
+
+		user, err := service.Register(req)
+
+		assert.Error(t, err)
+		assert.Nil(t, user)
+		assert.EqualError(t, err, expectedErr.Error())
+
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Error Case - User Creation Failure", func(t *testing.T) {
+		repo, service, hash, _ := setupTest(t)
+		req := &domain.RegisterRequest{
+			Email:    email,
+			Password: password,
+			Name:     name,
+			Phone:    phone,
+			Role:     role,
+		}
+		hashedPassword := "hashedPassword"
+		expectedUser := &entities.UserModels{
+			Email:    email,
+			Password: hashedPassword,
+			Name:     name,
+			Phone:    phone,
+			Role:     role,
+		}
+		expectedErr := errors.New("user creation failed")
+
+		repo.On("GetUsersByEmail", email).Return(nil, nil)
+		hash.On("GenerateHash", password).Return(hashedPassword, nil)
+		repo.On("CreateUser", expectedUser).Return(nil, expectedErr)
+
+		user, err := service.Register(req)
+
+		assert.Error(t, err)
+		assert.Nil(t, user)
+		assert.EqualError(t, err, expectedErr.Error())
+
+		repo.AssertExpectations(t)
+	})
+}
