@@ -11,8 +11,10 @@ Nama : Anan Widianto
 2. Pastikan Anda telah mengarahkan terminal ke direktori tempat proyek Golang Anda berada.
 3. Jalankan perintah `go mod tidy` untuk memastikan dependensi proyek sudah terpenuhi.
 4. Setelah itu, jalankan perintah `go run main.go` untuk menjalankan program.
-5. Program akan mulai berjalan, dan Anda dapat mengaksesnya melalui browser atau perangkat lunak lainnya yang mendukung aplikasi web.
-6. Untuk mengakses API, gunakan endpoint yang sesuai dengan kebutuhan Anda.
+5. Untuk mengakses API, gunakan endpoint yang sesuai dengan kebutuhan Anda. (gunakan endpoint PING untuk memeriksa apkaah program telah berhasil berjalan)
 
 ## Dokumentasi API
 https://documenter.getpostman.com/view/33777467/2sA35A6jsY
+
+## Jawaban 
+Untuk jawaban soal System Design Test dan Database Design Test terdapat di folder jawaban
