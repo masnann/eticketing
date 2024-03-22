@@ -2,6 +2,7 @@ package database
 
 import (
 	"eticketing/module/entities"
+
 	"gorm.io/gorm"
 )
 
@@ -13,6 +14,7 @@ func Migrate(db *gorm.DB) {
 		entities.StudioModels{},
 		entities.SeatModels{},
 		entities.OrderModels{},
+		entities.OrderDetailModels{},
 	)
 
 	if err != nil {

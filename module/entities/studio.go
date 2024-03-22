@@ -3,7 +3,7 @@ package entities
 import "time"
 
 type StudioModels struct {
-	ID           uint64     `gorm:"column:id;primaryKey" json:"id"`
+	ID        uint64     `gorm:"column:id;primaryKey" json:"id"`
 	Name      string     `gorm:"column:name;type:VARCHAR(255)" json:"name"`
 	Capacity  int        `gorm:"column:capacity" json:"capacity"`
 	CreatedAt time.Time  `gorm:"column:created_at;type:timestamp" json:"created_at"`
